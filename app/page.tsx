@@ -41,6 +41,24 @@ import {
 // Floating particles component
 const FloatingParticles = () => {
   const particles = Array.from({ length: 50 }, (_, i) => i)
+  const [positions, setPositions] = useState(particles.map(() => ({ x: 0, y: 0 })))
+  const [targetPositions, setTargetPositions] = useState(positions)
+
+  useEffect(() => {
+    // Inicializar posiciones solo en el cliente
+    setPositions(
+      particles.map(() => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+      }))
+    )
+    setTargetPositions(
+      particles.map(() => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+      }))
+    )
+  }, [])
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -48,14 +66,8 @@ const FloatingParticles = () => {
         <motion.div
           key={particle}
           className="absolute w-2 h-2 bg-white rounded-full opacity-20"
-          initial={{
-            x: Math.random() * (typeof window !== "undefined" ? window.innerWidth : 1000),
-            y: Math.random() * (typeof window !== "undefined" ? window.innerHeight : 1000),
-          }}
-          animate={{
-            x: Math.random() * (typeof window !== "undefined" ? window.innerWidth : 1000),
-            y: Math.random() * (typeof window !== "undefined" ? window.innerHeight : 1000),
-          }}
+          initial={{ x: positions[particle]?.x || 0, y: positions[particle]?.y || 0 }}
+          animate={{ x: targetPositions[particle]?.x || 0, y: targetPositions[particle]?.y || 0 }}
           transition={{
             duration: Math.random() * 20 + 10,
             repeat: Number.POSITIVE_INFINITY,
@@ -1119,7 +1131,7 @@ export default function EmergencyLineActivation() {
             className="border-t border-gray-700 pt-8"
           >
             <p className="text-gray-400 text-lg">
-              © 2024 Sistema de Activación de Línea de Emergencia.
+              © 2025 Sistema de Activación de Línea de Emergencia. por Yenit Rivas
               <span className="text-blue-400"> Salvando vidas con tecnología e innovación.</span>
             </p>
           </motion.div>
