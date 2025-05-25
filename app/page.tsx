@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect, useRef } from "react"
 import { motion, useInView, AnimatePresence } from "framer-motion"
 import {
@@ -102,17 +100,20 @@ const MedicalParticles = () => {
   const [particles, setParticles] = useState<Particle[]>([])
 
   useEffect(() => {
-    // Generar las partículas solo en el cliente
-    const particlesData = Array.from({ length: 15 }, (_, i) => ({
-      id: i,
-      initialX: Math.random() * 1200,
-      initialY: Math.random() * 800,
-      animateX: Math.random() * 1200,
-      animateY: Math.random() * 800,
-      duration: Math.random() * 10 + 5,
-    }))
-    setParticles(particlesData)
+    if (typeof window !== 'undefined') {
+      const particlesData = Array.from({ length: 10 }, (_, i) => ({
+        id: i,
+        initialX: Math.random() * window.innerWidth,
+        initialY: Math.random() * window.innerHeight,
+        animateX: Math.random() * window.innerWidth,
+        animateY: Math.random() * window.innerHeight,
+        duration: Math.random() * 10 + 5,
+      }))
+      setParticles(particlesData)
+    }
   }, [])
+
+  if (typeof window === 'undefined') return null
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -409,14 +410,31 @@ const InfographicArrow = ({ delay = 0 }) => (
 export default function EmergencyLineActivation() {
   const [activeStep, setActiveStep] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
-    setIsLoaded(true)
-    const interval = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % 10)
-    }, 3000)
-    return () => clearInterval(interval)
+    try {
+      setIsLoaded(true)
+      const interval = setInterval(() => {
+        setActiveStep((prev) => (prev + 1) % 10)
+      }, 3000)
+      return () => clearInterval(interval)
+    } catch (err) {
+      setError(err as Error)
+      console.error("Error in EmergencyLineActivation:", err)
+    }
   }, [])
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-red-50">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-2">Error</h1>
+          <p className="text-gray-600">Lo sentimos, ha ocurrido un error. Por favor, intente de nuevo.</p>
+        </div>
+      </div>
+    )
+  }
 
   const steps = [
     {
