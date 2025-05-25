@@ -1,10 +1,12 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
+  "version": 2,
+  "buildCommand": "next build",
   "framework": "nextjs",
   "functions": {
     "app/**/*.{js,ts,jsx,tsx}": {
-      "runtime": "nodejs18.x"
+      "runtime": "nodejs18.x",
+      "memory": 1024,
+      "maxDuration": 10
     }
   }
 }
